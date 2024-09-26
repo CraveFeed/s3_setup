@@ -25,19 +25,19 @@ app.post('/upload', upload.single('photo'), async (req: Request, res: Response)=
             return;
         }
 
-        const imageName = file.originalname;
+        const uniqueImageName = `${Date.now()}-${file.originalname}`;
         const uploadParams = {
             Bucket: 'ride2024',
-            Key: imageName,
+            Key: uniqueImageName,
             Body: file.buffer,
-            ContentType: file.mimetype
+            ContentType: file.mimetype,
         };
 
         await s3.send(new PutObjectCommand(uploadParams));
 
         const signedUrlParams = {
             Bucket: 'ride2024',
-            Key: imageName,
+            Key: uniqueImageName,
         };
         const signedUrl = await getSignedUrl(s3, new GetObjectCommand(signedUrlParams), { expiresIn: 50000 });
 
